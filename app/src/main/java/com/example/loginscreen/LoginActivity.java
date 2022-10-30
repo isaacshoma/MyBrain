@@ -1,24 +1,30 @@
 package com.example.loginscreen;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 
 public class LoginActivity extends AppCompatActivity {
 
     //Textview references
     private TextView username;
     private TextView password;
+    private Switch mySwitch;
 
     //username and password strings
     private String usernameString;
     private String passwordString;
 
+    private int switchValue;
+    private SharedPreferences mySharedPrefs;
 
 
 
@@ -36,42 +42,70 @@ public class LoginActivity extends AppCompatActivity {
         //get username & password textview references by user-ids
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
+        //get switch object
+        mySwitch = findViewById(R.id.switch1);
+
+
+        //create runnable object
+        Runnable runnable = new Runnable() {
+            public void run() {
+                try {
+                    Socket clientSocket = new Socket("localhost", 5555);
+                    DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+                    out.writeUTF("HELLO SERVER");
+
+                    Log.e("ERROR", "try block executed in LoginActivity");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("ERROR", "catch block executed in LoginActivity");
+                }
+            }
+        };
+
+        //create thread and start it
+        Thread thread = new Thread(runnable);
+        thread.start();
+
+
+
     }
 
 
-
-    //take patient to scroll activity
+    //Upon button press execute. Take user to login2.
     public void login(View v) {
-
-        //check if username exists
-            //else tell user username does not exist
-
-            //check if username matches password
-                //else tell user password is incorrect
-
-        //go to scrolling activity
-        Intent intent = new Intent (this, ScrollingActivity.class);
-        startActivity(intent);
-    }
-
-    //register patient with input username and password
-    public void register(View v) {
 
         //check the text in username & password text-views and store as string
         usernameString = username.getText().toString();
         passwordString = password.getText().toString();
 
-        //was a valid username-password pair entered?
-        boolean validCombination = false;
 
-        //check if username is already taken
-            //if username is already taken re-prompt user
 
-        //check if password is valid
-            //set bool to true
+        //search for username and password pair in database
+            //if no pair is found: ERROR incorrect username or password
 
-        //if validCombination found, take patient toScrollWindow
-        Intent intent = new Intent (this, ScrollingActivity.class);
+
+
+        //go to login2
+        Intent intent = new Intent (this, LoginActivity2.class);
+        startActivity(intent);
+    }
+
+    public void register(View v) {
+        //check the text in username & password text-views and store as string
+        usernameString = username.getText().toString();
+        passwordString = password.getText().toString();
+
+        //search database for username
+
+
+        //if username is already in use
+            //Toast.makeText(LoginActivity.this, "Username is taken", Toast.LENGTH_LONG).show();
+        //else
+            // add username password pair to database
+            // 2) store username and password strings in shared prefs to be automatically entered next time
+
+        //go to login2
+        Intent intent = new Intent (this, LoginActivity2.class);
         startActivity(intent);
     }
 }

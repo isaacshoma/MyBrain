@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.util.Log;
-import android.widget.Button;
+import android.os.Handler;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    //time to display splash screen (s/1000)
+    private static int DELAY_TIME = 800;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,19 +21,17 @@ public class MainActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-    }
 
-    public void patientLogin(View v) {
 
-        //take patient to login activity
-        Intent intent = new Intent (this, LoginActivity.class);
-        startActivity(intent);
-    }
 
-    //take user to main user activity
-    public void providerLogin(View v) {
-        //take user to createEvent activity
-        Intent intent = new Intent (this, EventCreatorActivity.class);
-        startActivity(intent);
+        //after (DELAY_TIME), go to login activity
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent goToLogin = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(goToLogin);
+                finish();
+            }
+        }, DELAY_TIME);
     }
 }
