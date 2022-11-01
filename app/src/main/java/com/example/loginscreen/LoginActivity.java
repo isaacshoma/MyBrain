@@ -46,26 +46,9 @@ public class LoginActivity extends AppCompatActivity {
         mySwitch = findViewById(R.id.switch1);
 
 
-        //create runnable object
-        Runnable runnable = new Runnable() {
-            public void run() {
-                try {
-                    Socket clientSocket = new Socket("localhost", 5555);
-                    DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-                    out.writeUTF("HELLO SERVER");
-
-                    Log.e("ERROR", "try block executed in LoginActivity");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.e("ERROR", "catch block executed in LoginActivity");
-                }
-            }
-        };
-
         //create thread and start it
-        Thread thread = new Thread(runnable);
-        thread.start();
-
+        Multithreading thread1 = new Multithreading();
+        thread1.start();
 
 
     }
