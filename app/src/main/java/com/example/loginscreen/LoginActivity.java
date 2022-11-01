@@ -4,14 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
 
+/**
+ * LoginActivity class is the primary login screen where both primary and secondary users
+ * can register an account and login. After login, user is taken to login screen 2.
+ *
+ * Entered Info includes:
+ * String username,
+ * String password,
+ * int/bool whether to remember login details (0 or 1),
+ */
 public class LoginActivity extends AppCompatActivity {
 
     //Textview references
@@ -23,7 +28,9 @@ public class LoginActivity extends AppCompatActivity {
     private String usernameString;
     private String passwordString;
 
+    //switch value (whether to remember login details)
     private int switchValue;
+    //file to store user preferences
     private SharedPreferences mySharedPrefs;
 
 
@@ -46,15 +53,12 @@ public class LoginActivity extends AppCompatActivity {
         mySwitch = findViewById(R.id.switch1);
 
 
-        //create thread and start it
+        //create a thread and start it (used for sockets to establish server connection)
         Multithreading thread1 = new Multithreading();
         thread1.start();
-
-
     }
 
-
-    //Upon button press execute. Take user to login2.
+    //Upon login button press, execute. Takes user to login2 activity.
     public void login(View v) {
 
         //check the text in username & password text-views and store as string
@@ -62,17 +66,16 @@ public class LoginActivity extends AppCompatActivity {
         passwordString = password.getText().toString();
 
 
-
         //search for username and password pair in database
             //if no pair is found: ERROR incorrect username or password
 
-
-
-        //go to login2
+        //go to login2 activity
         Intent intent = new Intent (this, LoginActivity2.class);
         startActivity(intent);
     }
 
+    //Upon register button press, execute. Registers user by storing details in database.
+    //Takes user to login2 activity
     public void register(View v) {
         //check the text in username & password text-views and store as string
         usernameString = username.getText().toString();
@@ -84,8 +87,8 @@ public class LoginActivity extends AppCompatActivity {
         //if username is already in use
             //Toast.makeText(LoginActivity.this, "Username is taken", Toast.LENGTH_LONG).show();
         //else
-            // add username password pair to database
-            // 2) store username and password strings in shared prefs to be automatically entered next time
+            // add username-password pair to database
+            // store username and password strings in shared prefs to be automatically entered next time
 
         //go to login2
         Intent intent = new Intent (this, LoginActivity2.class);

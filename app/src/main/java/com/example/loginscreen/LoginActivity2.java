@@ -6,6 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * LoginActivity2 class is the secondary login screen where a user selects whether they are a
+ * primary (media receiver) or secondary user (media provider). 2 buttons are provided to make
+ * the selection. After selecting an option, the choice is stored in user preferences and this
+ * activity will not be shown again.
+ */
 public class LoginActivity2 extends AppCompatActivity {
 
     @Override
@@ -19,17 +25,14 @@ public class LoginActivity2 extends AppCompatActivity {
         }
     }
 
-    //take user to scrolling activity
+    //Upon button press, takes primary user to scrollingActivity
     public void patientLogin(View v) {
-
-        //take patient to scrolling activity
         Intent intent = new Intent (this, ScrollingActivity.class);
         startActivity(intent);
     }
 
-    //take user to eventCreator activity
+    //Upon button press, takes secondary user to eventCreator activity
     public void providerLogin(View v) {
-        //take user to createEvent activity
         Intent intent = new Intent (this, EventCreatorActivity.class);
         startActivity(intent);
     }
