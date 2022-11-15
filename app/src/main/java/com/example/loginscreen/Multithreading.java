@@ -13,6 +13,7 @@ import java.net.Socket;
  * transferred.
  */
 public class Multithreading extends Thread{
+
     @Override
     public void run() {
         //Log.e("Error","E1");
