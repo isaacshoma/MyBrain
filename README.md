@@ -1,12 +1,12 @@
-#####CMPT 385, Fall 2022, Trinity Western University
-##Group 2: We Don't Byte
-##Project: My Brain
+##### CMPT 385, Fall 2022, Trinity Western University
+## Group 2: We Don't Byte
+## Project: My Brain
 
 Last Modified: Nov 15, 2022
 Members: Dane Munday, Isaac Shoma, Okewoma Okumo, Denghao Wang
 
 
-#How to Launch:
+# How to Launch:
 Option 1: Download
 1) Download repository files with the download button irectly to the left of the blue "clone" button
 2) Extract files and open in android studio
@@ -19,7 +19,7 @@ Option 2: Git Clone (Git must be installed)
 5) Open the cloned project in android studio
 
 
-#Purpose:
+# Purpose:
 The MyBrain android app is a media sharing app either for use by a therapist/caregiver
 of a dementia patient as an aid for reminiscence therapy, or for direct use by the dementia patient.
 The main user (dementia patient) is given a feed of content sent by secondary users (friends/family)
@@ -29,7 +29,7 @@ sender's image, name, relation to the primary user, as well as an optional perso
 This app was created to address the concern of an increasing sense of disconnection and loneliness
 among dementia patients.
 
-#Program flow
+# Program flow
 1)   Launch screen
 2)   Login Screen 1 (register and sign-in)
 3)   Login Screen 2 (select user type: provider or receiver)
@@ -42,7 +42,7 @@ Upon first logging in, the user will select whether they are the primary user (p
 secondary user (friend/family) this option will be stored in user preferences and will not appear
 a second time. Primary users are the media receivers while secondary users provide the media for the feed.
 
-#Classes Identified by User type:
+# Classes Identified by User type:
 Unique Primary User Activities: ScrollingActivity, ImageSelectActivity
 Unique Secondary User Activity: EventCreatorActivity
 Shared Activities: MainActivity, LoginActivity, LoginActivity2
@@ -50,7 +50,7 @@ Shared Activities: MainActivity, LoginActivity, LoginActivity2
 
 
 
-##CMPT 385 Group 2 Project Style Guide:
+## CMPT 385 Group 2 Project Style Guide:
     Based on https://www.cs.cornell.edu/courses/JavaAndDS/JavaStyle.html#CamelCase
 
 General Naming uses camelcase
