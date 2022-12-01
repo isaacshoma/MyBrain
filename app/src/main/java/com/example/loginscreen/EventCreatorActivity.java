@@ -46,6 +46,11 @@ public class EventCreatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_creator);
 
+        //hide action bar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         selectedImage = findViewById(R.id.imageview10);
         selectedImage2 = findViewById(R.id.imageView11);
         cameraBtn = findViewById(R.id.cameraBtn);
