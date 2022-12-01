@@ -1,12 +1,16 @@
 package com.example.loginscreen;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 /**
  * ScrollingActivity class is the primary user's activity where they will spend the majority of
@@ -20,6 +24,10 @@ public class ScrollingActivity extends AppCompatActivity {
 
     //user's username/ID
     private String username = "Default User";
+    private final static String USER = "user";
+
+    //textview object
+    private TextView textObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +38,32 @@ public class ScrollingActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+
+        //textView reference and assignment
+        textObject = findViewById(R.id.textView);
+
+        //find user's username
+        SharedPreferences sharedPreferences = getSharedPreferences("NAME", MODE_PRIVATE);
+        String userString = sharedPreferences.getString(USER, "");
+        String[] stringList = userString.split("_");
+
+        //capitalize first letter of username
+        String usernameString = stringList[0];
+        //take first letter as new string
+        String firstLetter = usernameString.charAt(0) + "";
+        //create substring without first letter
+        String subLength = usernameString.substring(1, usernameString.length());
+        //capitalize and combine
+        firstLetter = firstLetter.toUpperCase();
+        String newUsernameString = firstLetter + subLength;
+
+        //set text object's text
+        textObject.setText(newUsernameString);
     }
 
     //Upon button click (an event item), user is taken to ImageSelectActivity
     public void toImage(View v) {
         Intent intent = new Intent (this, ImageSelectActivity.class);
         startActivity(intent);
-    }
-
-    //Upon button click, user is provided a toast notification on what their userID/username is
-    public void getUsername(View v) {
-        Toast toast = Toast.makeText(ScrollingActivity.this, "Username = " + username, Toast.LENGTH_LONG);
-        toast.show();
     }
 }
