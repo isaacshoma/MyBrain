@@ -9,6 +9,7 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.usage.UsageEvents;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,9 +28,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,9 +55,7 @@ public class EventCreatorActivity extends AppCompatActivity {
     ImageView selectedImage2;
     Button cameraBtn, galleryBtn;
     String currentPhotoPath;
-
-
-
+    StorageReference storageReference;
 
 
     @Override
@@ -57,16 +63,21 @@ public class EventCreatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_creator);
 
+
         //hide action bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
+        // creating variables for camera and gallery display, camera and gallery button
         selectedImage = findViewById(R.id.imageview10);
         selectedImage2 = findViewById(R.id.imageView11);
         cameraBtn = findViewById(R.id.cameraBtn);
         galleryBtn = findViewById(R.id.galleryBtn);
 
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        // Upon click, it will check if we can access camera and gallery through permissions
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,19 +94,11 @@ public class EventCreatorActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-
-
-
-
-
-
+    // When ask permission, we will Write into storage
     private void askCameraPermissions() {
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) &&
                 ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, CAMERA_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_PERMISSION_CODE);
         } else {
             dispatchTakePictureIntent();
         }
@@ -113,6 +116,8 @@ public class EventCreatorActivity extends AppCompatActivity {
         }
     }
 
+    // the Activity first check is the request Permissions recognizes the CODE, then it will create an URL for Camera and Gallery when a photo is taken or selected,
+    // with the URL Created, both camera and gallery image will be uploaded to Firebase
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -127,8 +132,12 @@ public class EventCreatorActivity extends AppCompatActivity {
                 mediaScanIntent.setData(contentUri);
                 this.sendBroadcast(mediaScanIntent);
 
+                uploadImageToFirebase(f.getName(), contentUri);
+
+
             }
         }
+
 
         if (requestCode == GALLERY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -138,8 +147,34 @@ public class EventCreatorActivity extends AppCompatActivity {
                 String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(contentUri);
                 Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
                 selectedImage2.setImageURI(contentUri);
+
+                uploadImageToFirebase(imageFileName, contentUri);
             }
         }
+    }
+
+    // Upload image method, we wil store the image in a folder called "pictures", giving it a unique name for potential pulling
+    // A toast will appear noting the user that the image has been uploaded
+    private void uploadImageToFirebase(String name, Uri contentUri) {
+        final StorageReference image = storageReference.child("pictures/" + name);
+        image.putFile(contentUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.d("tag", "onSuccess: Upload URL is " + uri.toString());
+                    }
+                });
+
+                Toast.makeText(EventCreatorActivity.this, "Image is Upload", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(EventCreatorActivity.this, "Upload Failed.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private String getFileExt(Uri contentUri) {
@@ -148,6 +183,7 @@ public class EventCreatorActivity extends AppCompatActivity {
         return mime.getExtensionFromMimeType(c.getType(contentUri));
     }
 
+    // Creating file for images, converting images to JPEG, saving the images taken on the users phone as well
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -168,7 +204,7 @@ public class EventCreatorActivity extends AppCompatActivity {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-            } catch (IOException exception) {
+            } catch (IOException ex) {
 
             }
             // Continue only if the File was successfully created
@@ -180,8 +216,6 @@ public class EventCreatorActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     //send images to firebase
     public void sendContent(View v) {

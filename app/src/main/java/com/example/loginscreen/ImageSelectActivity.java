@@ -57,13 +57,9 @@ public class ImageSelectActivity extends AppCompatActivity {
             eventNum = extras.getInt("Num");
         }
 
-
         //get textview references for name and relation
         nameText = findViewById(R.id.textView5);
         relationText = findViewById(R.id.textView6);
-
-
-
 
 
     }
