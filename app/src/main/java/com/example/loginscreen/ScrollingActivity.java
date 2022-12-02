@@ -66,4 +66,9 @@ public class ScrollingActivity extends AppCompatActivity {
         Intent intent = new Intent (this, ImageSelectActivity.class);
         startActivity(intent);
     }
+
+    public void returnToLogin(View v) {
+        Intent intent = new Intent (this, LoginActivity.class);
+        startActivity(intent);
+    }
 }

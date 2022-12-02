@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,14 +23,20 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+//This class creates events to be sent firebase to be retrieved by a specified user
 public class EventCreatorActivity extends AppCompatActivity {
 
     public static final int CAMERA_PERMISSION_CODE = 101;
@@ -40,6 +47,10 @@ public class EventCreatorActivity extends AppCompatActivity {
     ImageView selectedImage2;
     Button cameraBtn, galleryBtn;
     String currentPhotoPath;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +81,16 @@ public class EventCreatorActivity extends AppCompatActivity {
                 startActivityForResult(gallery, GALLERY_REQUEST_CODE);
             }
         });
-
     }
+
+
+
+
+
+
+
+
+
 
     private void askCameraPermissions() {
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) &&
@@ -154,6 +173,7 @@ public class EventCreatorActivity extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
+
                 Uri photoURI = FileProvider.getUriForFile(this, "com.example.loginscreen.fileProvider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
@@ -161,13 +181,44 @@ public class EventCreatorActivity extends AppCompatActivity {
         }
     }
 
+
+
+    //send images to firebase
     public void sendContent(View v) {
 
-        //send event to patient
+        //select images
+
+        //name them
+
+
+        //send images to firebase
+
+        //send text to firebase
+        sendText();
+
+
 
         //notify user message has been sent
         Toast toast = Toast.makeText(EventCreatorActivity.this, "Message Sent", Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    private void sendText() {
+        //get editText references
+        EditText senderName = findViewById(R.id.personalNameInput);
+        EditText relationToRecipient = findViewById(R.id.relationInput);
+        EditText recipientUsername = findViewById(R.id.recipientUsernameInput);
+
+        //create data object
+        UserData userData = new UserData(senderName, relationToRecipient, recipientUsername);
+
+        //add to database
+        userData.sendToFirebase();
+    }
+
+    public void returnToLogin(View v) {
+        Intent intent = new Intent (this, LoginActivity.class);
+        startActivity(intent);
     }
 
 }
