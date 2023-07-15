@@ -2,8 +2,7 @@
 ## Group 2: We Don't Byte
 ## Project: My Brain
 
-Last Modified: Nov 15, 2022
-Members: Dane Munday, Isaac Shoma, Okewoma Okumo, Denghao Wang
+
 
 
 # How to Launch:
